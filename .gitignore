@@ -8,6 +8,9 @@ objs/
 # Executables
 *.out
 
+# Documentation
+docs/
+
 # on mac
 .DS_Store
 .vscode
