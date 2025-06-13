@@ -1,18 +1,20 @@
 # Object files
-objs/
-*.o
+**/objs/
+**/*.o
 
 # Libraries
-*.a
+**/*.a
 
 # Executables
-*.out
+**/*.out
+**/*.exe
+**/a.out
 
 # Documentation
 docs/
 
 # on mac
-.DS_Store
-.vscode
-.github
-.devcontainer
+**/.DS_Store
+**/.vscode
+**/.github
+**/.devcontainer
