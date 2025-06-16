@@ -90,10 +90,6 @@ void testMixedOperations() {
 }
 
 int main() {
-  std::cout << "=== CPP Module 06 - Exercise 02: Identify Real Type ==="
-            << std::endl;
-  std::cout << std::endl;
-
   testRandomGeneration();
   testPointerIdentification();
   testReferenceIdentification();
