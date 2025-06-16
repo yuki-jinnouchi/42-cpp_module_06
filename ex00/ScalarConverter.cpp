@@ -195,7 +195,8 @@ void ScalarConverter::convertFromDouble(const std::string& literal) {
   }
 
   // Convert to int
-  if (std::isnan(doubleValue) || std::isinf(doubleValue) || !isInIntRange(doubleValue)) {
+  if (std::isnan(doubleValue) || std::isinf(doubleValue) ||
+      !isInIntRange(doubleValue)) {
     std::cout << "int: impossible" << std::endl;
   } else {
     std::cout << "int: " << static_cast<int>(doubleValue) << std::endl;
