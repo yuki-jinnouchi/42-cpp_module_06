@@ -58,18 +58,18 @@ run_test() {
 echo -e "${BLUE}Building the project...${NC}"
 
 # Check if we're running from ex00 directory or test directory
-if [ -f "./convert.a" ]; then
+if [ -f "./convert" ]; then
     # Running from ex00 directory
-    EXECUTABLE="./convert.a"
+    EXECUTABLE="./convert"
     make fclean > /dev/null 2>&1
     make > /dev/null 2>&1
-elif [ -f "../convert.a" ]; then
+elif [ -f "../convert" ]; then
     # Running from test directory
-    EXECUTABLE="../convert.a"
+    EXECUTABLE="../convert"
     make -C .. fclean > /dev/null 2>&1
     make -C .. > /dev/null 2>&1
 else
-    echo -e "${RED}Error: Cannot find convert.a${NC}"
+    echo -e "${RED}Error: Cannot find convert${NC}"
     exit 1
 fi
 
@@ -152,7 +152,7 @@ float: impossible
 double: impossible"
 
 # Test 12: No arguments
-run_test "No arguments" "no_arg" "Usage: ./convert.a <literal>"
+run_test "No arguments" "no_arg" "Usage: ./convert <literal>"
 
 # Test 13: Large integer (overflow test)
 run_test "Large integer" "2147483648" "char: impossible

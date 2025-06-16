@@ -1,18 +1,6 @@
-# # Memo
-# VAR = val: Normal setting - values within are recursively expand when var used.
-# VAR := val: Setting of var with simple expansion of values inside - values are expanded at decl time.
-# VAR ?= val: Set var only if it doesn't have a value.
-# VAR += val: Append val to existing value (or set if var didn't exist).
-#
-# $@: name of the target file (one before colon)
-# $<: name of first prerequisite file (first one after colon)
-# $^: names of all prerequisite files (space separated)
-# $*: stem (bit which matches the % wildcard in rule definition)
-
-#-----------------------------------------------
 # Output File
 OUTPUT_DIR =	.
-NAME = 				$(OUTPUT_DIR)/convert.a
+NAME = 				$(OUTPUT_DIR)/convert
 
 # Directories
 INCLUDES_DIR =	.
@@ -20,27 +8,28 @@ SOURCES_DIR =		.
 OBJECTS_DIR =		objs
 
 # Files
-SOURCES =		./ScalarConverter.cpp ./main.cpp
+SOURCES =		ScalarConverter.cpp main.cpp
 INCLUDES =	$(patsubst $(SOURCES_DIR)/%.cpp, $(INCLUDES_DIR)/%.hpp, $(SOURCES))
-OBJECTS =		$(patsubst $(SOURCES_DIR)/%.cpp, $(OBJECTS_DIR)/%.o, $(SOURCES))
+OBJECTS =		$(SOURCES:%.cpp=$(OBJECTS_DIR)/%.o)
 
 # Compiler & Flags
-CXX =				c++
-CXXFLAGS =	-Wall -Wextra -Werror -std=c++98
-CPPFLAGS :=	-I $(INCLUDES_DIR)
-MEMOLYFLAGS := -fsanitize=address -g3
+CXX =			c++
+CXXFLAGS =		-Wall -Wextra -Werror -std=c++98
+CPPFLAGS =		-I $(INCLUDES_DIR)
+MEMOLYFLAGS = -fsanitize=address -g3
 
 #-----------------------------------------------
 # Colors
-DEF_COLOR = \033[0;39m
-GRAY = \033[0;90m
-RED = \033[0;91m
-GREEN = \033[0;92m
-YELLOW = \033[0;93m
-BLUE = \033[0;94m
-MAGENTA = \033[0;95m
-CYAN = \033[0;96m
-WHITE = \033[0;97m
+RESET = \033[0m
+BOLD = \033[1m
+# Regular Colors
+GREEN = \033[32m
+CYAN = \033[36m
+GRAY = \033[90m
+# Bold Colors
+B_GREEN = \033[1;32m
+B_BLUE = \033[1;34m
+B_CYAN = \033[1;36m
 
 #-----------------------------------------------
 # Rules
@@ -48,18 +37,17 @@ all:	$(NAME)
 
 # Link Targets
 $(NAME): $(OBJECTS)
-	@printf "\r$(GREEN)[%2d/%2d]$(DEF_COLOR) All files compiled! Linking $(CYAN)$(NAME)$(DEF_COLOR)\033[K" \
-		"$$(find $(OBJECTS) -type f | wc -l)" "$$(find $(SOURCES) \( -type l -o -type f \) | wc -l)"
+	@printf "\r$(GREEN)[%2d/%2d]$(RESET) All files compiled! Linking $(CYAN)$(NAME)$(RESET)\033[K\n" \
+		"$$(find $(OBJECTS_DIR) -name '*.o' | wc -l)" "$$(echo $(SOURCES) | wc -w)"
 	@$(CXX) $(CPPFLAGS) $^ -o $@
-	@echo "\n$(GREEN)<-------- $(NAME) linked. -------------------------->$(DEF_COLOR)"
+	@echo "$(B_GREEN)SUCCESS:$(RESET) $(NAME) linked successfully"
 	@chmod 755 $(NAME)
-	@echo "$(GREEN)<-------- $(NAME) permission changed. -------------->$(DEF_COLOR)"
-	@echo "$(CYAN)######### $(NAME) compile finished! #################$(DEF_COLOR)"
+	@echo "$(B_CYAN)READY:$(RESET) $(NAME) is ready to run"
 
 # Compile Targets
 $(OBJECTS_DIR)/%.o: $(SOURCES_DIR)/%.cpp | $(OBJECTS_DIR)
-	@printf "\r$(GREEN)[%2d/%2d]$(DEF_COLOR) Compiling objects: $(CYAN)%s$(DEF_COLOR)\033[K" \
-		"$$(find $(OBJECTS_DIR) -type f | wc -l)" "$$(find $(SOURCES) \( -type l -o -type f \) | wc -l)" "$<"
+	@printf "\r$(GREEN)[%2d/%2d]$(RESET) Compiling $(CYAN)%s$(RESET)\033[K" \
+		"$$(find $(OBJECTS_DIR) -type f | wc -l)" "$$(echo $(SOURCES) | wc -w)" "$<"
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
 
 $(OBJECTS_DIR):
@@ -69,11 +57,11 @@ $(OBJECTS_DIR):
 clean:
 	@rm -rf $(OBJECTS)
 	@rm -rfd $(OBJECTS_DIR)
-	@echo "$(GRAY)<-------- $(NAME) object files cleaned. ------------>$(DEF_COLOR)"
+	@echo "$(GRAY)CLEAN: $(NAME) object files cleaned$(RESET)"
 
 fclean:	clean
 	@rm -rf $(NAME)
-	@echo "$(GRAY)<-------- $(NAME) executable files cleaned. -------->$(DEF_COLOR)"
+	@echo "$(GRAY)FCLEAN: $(NAME) executable files cleaned$(RESET)"
 
 re:		fclean all
 
@@ -95,14 +83,16 @@ test: $(NAME)
 	@bash $(TEST_SHELL)
 
 #-----------------------------------------------
-
 debug:
-	@echo "INCLUDES: $(INCLUDES)"
-	@echo "SOURCES: $(SOURCES)"
-	@echo "OBJECTS: $(OBJECTS)"
-	@echo "OBJECTS_DIR: $(OBJECTS_DIR)"
-	@echo "CXX: $(CXX)"
-	@echo "CXXFLAGS: $(CXXFLAGS)"
-	@echo "CPPFLAGS: $(CPPFLAGS)"
-	@echo "NAME: $(NAME)"
-	@echo "OUTPUT_DIR: $(OUTPUT_DIR)"
+	@echo "$(B_BLUE)Debug Information:$(RESET)"
+	@echo "$(CYAN)SOURCES:$(RESET) $(SOURCES)"
+	@echo "$(CYAN)HEADERS:$(RESET) $(HEADERS)"
+	@echo "$(CYAN)OBJECTS:$(RESET) $(OBJECTS)"
+	@echo "$(CYAN)OBJECTS_DIR:$(RESET) $(OBJECTS_DIR)"
+	@echo "$(CYAN)CXX:$(RESET) $(CXX)"
+	@echo "$(CYAN)CXXFLAGS:$(RESET) $(CXXFLAGS)"
+	@echo "$(CYAN)CPPFLAGS:$(RESET) $(CPPFLAGS)"
+	@echo "$(CYAN)NAME:$(RESET) $(NAME)"
+	@echo "$(CYAN)OUTPUT_DIR:$(RESET) $(OUTPUT_DIR)"
+
+.PHONY: debug
