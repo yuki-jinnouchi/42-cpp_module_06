@@ -9,9 +9,9 @@ SOURCES_DIR =	.
 OBJECTS_DIR =	objs
 
 # Files
-SOURCES =		main.cpp Function.cpp $(CLASS_DIR)/Base.cpp
-HEADERS =		$(CLASS_DIR)/Base.hpp $(CLASS_DIR)/A.hpp $(CLASS_DIR)/B.hpp $(CLASS_DIR)/C.hpp Function.hpp
-OBJECTS =		$(SOURCES:%.cpp=$(OBJECTS_DIR)/%.o)
+SOURCES =		main.cpp Function.cpp class/Base.cpp
+HEADERS =		class/Base.hpp class/A.hpp class/B.hpp class/C.hpp Function.hpp
+OBJECTS =		$(OBJECTS_DIR)/main.o $(OBJECTS_DIR)/Function.o $(OBJECTS_DIR)/Base.o
 
 # Compiler & Flags
 CXX =			c++
@@ -51,7 +51,7 @@ $(OBJECTS_DIR)/%.o: $(SOURCES_DIR)/%.cpp | $(OBJECTS_DIR)
 		"$$(find $(OBJECTS_DIR) -type f | wc -l)" "$$(echo $(SOURCES) | wc -w)" "$<"
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
 
-$(OBJECTS_DIR)/%.o: $(CLASS_DIR)/%.cpp | $(OBJECTS_DIR)
+$(OBJECTS_DIR)/Base.o: $(CLASS_DIR)/Base.cpp | $(OBJECTS_DIR)
 	@printf "\r$(GREEN)[%2d/%2d]$(RESET) Compiling $(CYAN)%s$(RESET)\033[K" \
 		"$$(find $(OBJECTS_DIR) -type f | wc -l)" "$$(echo $(SOURCES) | wc -w)" "$<"
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
