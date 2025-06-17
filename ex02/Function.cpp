@@ -4,7 +4,6 @@
 #include <ctime>
 #include <exception>
 #include <iostream>
-#include <typeinfo>
 
 #include "A.hpp"
 #include "B.hpp"
@@ -61,7 +60,7 @@ void identify(Base& p) {
     (void)dynamic_cast<A&>(p);
     std::cout << "A" << std::endl;
     return;
-  } catch (const std::bad_cast&) {
+  } catch (const std::exception&) {
     // Not type A, continue
   }
 
@@ -69,7 +68,7 @@ void identify(Base& p) {
     (void)dynamic_cast<B&>(p);
     std::cout << "B" << std::endl;
     return;
-  } catch (const std::bad_cast&) {
+  } catch (const std::exception&) {
     // Not type B, continue
   }
 
@@ -77,7 +76,7 @@ void identify(Base& p) {
     (void)dynamic_cast<C&>(p);
     std::cout << "C" << std::endl;
     return;
-  } catch (const std::bad_cast&) {
+  } catch (const std::exception&) {
     // Not type C
     std::cout << "Unknown type" << std::endl;
   }
