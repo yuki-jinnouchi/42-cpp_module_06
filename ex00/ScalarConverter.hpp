@@ -35,8 +35,7 @@ class ScalarConverter {
   static void printAllImpossible();
 
   // Utility methods
-  static bool isValidNumber(const std::string& str, int requiredDotCount = 1,
-                            int minDigitCount = 2);
+  static bool isValidNumber(const std::string& str, int maxDotCount);
   static bool isInIntRange(double value);
   static bool hasDecimalPart(double value);
 

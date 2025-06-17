@@ -19,26 +19,27 @@ ScalarConverter::~ScalarConverter() {}
 // Type detection methods
 bool ScalarConverter::isChar(const std::string& literal) {
   if (literal.empty()) return false;
-  if (literal.length() != 3) return false;
-  if (literal[0] != '\'' || literal[2] != '\'') return false;
+  if (literal.length() != 1) return false;
+  if (!std::isprint(literal[0])) return false;
+  if (std::isdigit(literal[0])) return false;
   return true;
 }
 
 bool ScalarConverter::isInt(const std::string& literal) {
   if (literal.empty()) return false;
-  return isValidNumber(literal, 0, 1);
+  return isValidNumber(literal, 0);
 }
 
 bool ScalarConverter::isFloat(const std::string& literal) {
   if (literal.length() < 2 || literal[literal.length() - 1] != 'f')
-    return false;
+  return false;
 
   if (literal == "-inff" || literal == "+inff" || literal == "inff" ||
-      literal == "nan")
+      literal == "nanf")
     return true;
 
   std::string withoutF = literal.substr(0, literal.length() - 1);
-  return isValidNumber(withoutF, 1, 1);
+  return isValidNumber(withoutF, 1);
 }
 
 bool ScalarConverter::isDouble(const std::string& literal) {
@@ -46,12 +47,11 @@ bool ScalarConverter::isDouble(const std::string& literal) {
       literal == "nan")
     return true;
 
-  return isValidNumber(literal, 1, 1);
+  return isValidNumber(literal, 1);
 }
 
 // Helper methods
-bool ScalarConverter::isValidNumber(const std::string& str,
-                                    int requiredDotCount, int minDigitCount) {
+bool ScalarConverter::isValidNumber(const std::string& str, int maxDotCount) {
   if (str.empty()) return false;
 
   size_t start = 0;
@@ -72,12 +72,14 @@ bool ScalarConverter::isValidNumber(const std::string& str,
     }
   }
 
-  return dotCount == requiredDotCount && digitCount >= minDigitCount;
+  if (digitCount < 1) return false;
+  if (dotCount > maxDotCount) return false; // At least one digit before dot
+  return true;
 }
 
 // Type-specific conversion methods
 void ScalarConverter::convertFromChar(const std::string& literal) {
-  char c = literal[1];
+  char c = literal[0];
 
   // Print char (own type)
   if (static_cast<int>(c) >= 0 && static_cast<int>(c) <= 127 &&
