@@ -30,7 +30,8 @@ bool ScalarConverter::isInt(const std::string& literal) {
 }
 
 bool ScalarConverter::isFloat(const std::string& literal) {
-  if (literal.length() < 2 || literal.back() != 'f') return false;
+  if (literal.length() < 2 || literal[literal.length() - 1] != 'f')
+    return false;
 
   if (literal == "-inff" || literal == "+inff" || literal == "inff" ||
       literal == "nan")
