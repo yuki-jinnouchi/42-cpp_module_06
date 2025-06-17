@@ -4,6 +4,7 @@
 #include <ctime>
 #include <exception>
 #include <iostream>
+#include <typeinfo>
 
 #include "A.hpp"
 #include "B.hpp"
