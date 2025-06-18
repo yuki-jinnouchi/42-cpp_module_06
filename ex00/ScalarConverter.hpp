@@ -7,6 +7,7 @@
 #include <iomanip>
 #include <iostream>
 #include <limits>
+#include <sstream>
 #include <string>
 
 class ScalarConverter {
@@ -35,7 +36,6 @@ class ScalarConverter {
   static void printAllImpossible();
 
   // Utility methods
-  static bool isValidNumber(const std::string& str, int maxDotCount);
   static bool isInIntRange(double value);
   static bool hasDecimalPart(double value);
 

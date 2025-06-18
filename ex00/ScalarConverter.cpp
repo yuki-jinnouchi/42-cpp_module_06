@@ -1,6 +1,7 @@
 #include "ScalarConverter.hpp"
 
 #include <cctype>
+#include <sstream>
 
 // Private constructor - cannot be instantiated
 ScalarConverter::ScalarConverter() {}
@@ -20,60 +21,71 @@ ScalarConverter::~ScalarConverter() {}
 bool ScalarConverter::isChar(const std::string& literal) {
   if (literal.empty()) return false;
   if (literal.length() != 1) return false;
-  if (!std::isprint(literal[0])) return false;
   if (std::isdigit(literal[0])) return false;
   return true;
 }
 
 bool ScalarConverter::isInt(const std::string& literal) {
   if (literal.empty()) return false;
-  return isValidNumber(literal, 0);
+
+  std::stringstream ss(literal);
+  int value;
+
+  // Try to extract an integer from the stringstream
+  if (!(ss >> value)) return false;
+
+  // Check if the entire string was consumed (no remaining characters)
+  std::string remaining;
+  if (ss >> remaining) return false;
+
+  return true;
 }
 
 bool ScalarConverter::isFloat(const std::string& literal) {
-  if (literal.length() < 2 || literal[literal.length() - 1] != 'f')
-  return false;
+  if (literal.empty()) return false;
 
+  // Check for special float literals first
   if (literal == "-inff" || literal == "+inff" || literal == "inff" ||
       literal == "nanf")
     return true;
 
+  // Must end with 'f' for regular floats
+  if (literal.length() < 2 || literal[literal.length() - 1] != 'f')
+  return false;
+
+  // Remove the 'f' suffix and try to parse as float
   std::string withoutF = literal.substr(0, literal.length() - 1);
-  return isValidNumber(withoutF, 1);
+  std::stringstream ss(withoutF);
+  float value;
+
+  // Try to extract a float from the stringstream
+  if (!(ss >> value)) return false;
+
+  // Check if the entire string was consumed (no remaining characters)
+  std::string remaining;
+  if (ss >> remaining) return false;
+
+  return true;
 }
 
 bool ScalarConverter::isDouble(const std::string& literal) {
+  if (literal.empty()) return false;
+
+  // Check for special double literals first
   if (literal == "-inf" || literal == "+inf" || literal == "inf" ||
       literal == "nan")
     return true;
 
-  return isValidNumber(literal, 1);
-}
+  std::stringstream ss(literal);
+  double value;
 
-// Helper methods
-bool ScalarConverter::isValidNumber(const std::string& str, int maxDotCount) {
-  if (str.empty()) return false;
+  // Try to extract a double from the stringstream
+  if (!(ss >> value)) return false;
 
-  size_t start = 0;
-  if (str[0] == '+' || str[0] == '-') start++;
-  if (start == str.length()) return false;
+  // Check if the entire string was consumed (no remaining characters)
+  std::string remaining;
+  if (ss >> remaining) return false;
 
-  int dotCount = 0;
-  int digitCount = 0;
-
-  for (size_t i = start; i < str.length(); i++) {
-    if (str[i] == '.') {
-      dotCount++;
-      if (dotCount > 1) return false;
-    } else if (std::isdigit(str[i])) {
-      digitCount++;
-    } else {
-      return false;
-    }
-  }
-
-  if (digitCount < 1) return false;
-  if (dotCount > maxDotCount) return false; // At least one digit before dot
   return true;
 }
 
@@ -82,10 +94,9 @@ void ScalarConverter::convertFromChar(const std::string& literal) {
   char c = literal[0];
 
   // Print char (own type)
-  if (static_cast<int>(c) >= 0 && static_cast<int>(c) <= 127 &&
-      std::isprint(static_cast<int>(c))) {
+  if (std::isprint(static_cast<int>(c))) {
     std::cout << "char: '" << c << "'" << std::endl;
-  } else if (static_cast<int>(c) >= 0 && static_cast<int>(c) <= 127) {
+  } else if (0 <= static_cast<int>(c) && static_cast<int>(c) <= 127) {
     std::cout << "char: Non displayable" << std::endl;
   } else {
     std::cout << "char: impossible" << std::endl;
